@@ -3,6 +3,7 @@ import { locateFence, replaceFenceBody, type Fence } from './core/fence';
 import { findMapFences, regenerateMaps, wrapMapFence } from './core/map';
 import { locateNode, rewriteLabel, type LabelTarget, type RenderedRef } from './core/mermaid';
 import { DEFAULT_SETTINGS, KeelDiagramSettingTab, type KeelDiagramSettings } from './settings';
+import { renderD2Placeholder } from './ui/d2-placeholder';
 import { openInlineEditor } from './ui/inline-editor';
 import { WorkspaceMapper } from './workspace-map';
 
@@ -23,6 +24,12 @@ export default class KeelDiagramPlugin extends Plugin {
 		});
 		this.registerDomEvent(document, 'dblclick', (evt: MouseEvent) => {
 			void this.onDoubleClick(evt);
+		});
+
+		// D2 (KD-3): the renderer is too large to bundle; show the source with a note until that is decided.
+		this.registerMarkdownCodeBlockProcessor('d2', (source, el) => {
+			if (this.settings.d2Placeholder) renderD2Placeholder(source, el);
+			else el.createEl('pre').createEl('code', { text: source });
 		});
 
 		// Workspace map (§C6). Both commands are hidden in plain mode (no keel.json above the note).

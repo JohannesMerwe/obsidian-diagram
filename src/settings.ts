@@ -6,11 +6,14 @@ export interface KeelDiagramSettings {
 	editOnDoubleClick: boolean;
 	/** Flow direction of the generated workspace map. */
 	mapDirection: MapDirection;
+	/** Show a placeholder for d2 code blocks instead of leaving them as plain code. */
+	d2Placeholder: boolean;
 }
 
 export const DEFAULT_SETTINGS: KeelDiagramSettings = {
 	editOnDoubleClick: true,
 	mapDirection: 'LR',
+	d2Placeholder: true,
 };
 
 /** Declarative settings tab (Obsidian 1.13). Values live in `plugin.settings`. */
@@ -31,6 +34,11 @@ export class KeelDiagramSettingTab extends PluginSettingTab {
 					defaultValue: DEFAULT_SETTINGS.mapDirection,
 					options: { LR: 'Left to right', TD: 'Top down' },
 				},
+			},
+			{
+				name: 'Placeholder for D2 blocks',
+				desc: 'Show d2 code blocks in a placeholder box with a note. Turn off if another plugin renders D2. Takes effect after reopening the note.',
+				control: { type: 'toggle', key: 'd2Placeholder', defaultValue: DEFAULT_SETTINGS.d2Placeholder },
 			},
 		];
 	}

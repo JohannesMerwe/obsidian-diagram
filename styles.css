@@ -25,3 +25,18 @@
 	outline: none;
 	box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
 }
+
+.keel-diagram-d2-placeholder {
+	border: 1px dashed var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	padding: var(--size-4-2) var(--size-4-3);
+}
+
+.keel-diagram-d2-placeholder-note {
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+}
+
+.keel-diagram-d2-placeholder pre {
+	margin: var(--size-4-2) 0 0 0;
+}
