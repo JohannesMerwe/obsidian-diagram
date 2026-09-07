@@ -1,7 +1,7 @@
 {
 	"name": "obsidian-diagram",
 	"version": "0.1.0",
-	"description": "Edit Mermaid and D2 diagrams in place with changes written back to the source block, and generate a workspace map from keel.json.",
+	"description": "Edit Mermaid diagram labels in place, with the change written back to the source block, and generate a workspace map from keel.json.",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {

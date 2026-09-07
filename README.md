@@ -2,7 +2,7 @@
 
 Edit Mermaid and D2 diagrams in place; the text block is the source of truth.
 
-**Obsidian plugin** · id `keel-diagram` · status: pre-release (2026-09-07): Mermaid label editing and the workspace map work, D2 rendering is not bundled yet · MIT
+**Obsidian plugin** · id `keel-diagram` · status: beta, not yet on the registry; Mermaid label editing and the workspace map work, D2 rendering is not bundled yet · MIT
 
 Agents write diagrams as text. People want to click and rename. This plugin renders
 `mermaid` and `d2` fences and lets you edit a node's label in the rendered view, writing
@@ -65,8 +65,21 @@ Point a throwaway dev vault's `.obsidian/plugins/keel-diagram/` at this director
 GitHub releases whose tag equals the `manifest.json` version; the workflow in
 `.github/workflows/release.yml` builds and attaches the artifacts. Beta installs through BRAT.
 
+## Install
+
+Until the plugin is on the community registry, install it with
+[BRAT](https://github.com/TfTHacker/obsidian42-brat): *Add beta plugin* →
+`JohannesMerwe/obsidian-diagram`. Requires Obsidian 1.13.0 or later.
+
 ## Agent skills
 
-`agent/` will hold the same instructions in claude-skill and copilot-prompt formats, telling
-an agent what convention this plugin renders and what it must never do. Copy them into your
-agent's skills directory until keel links them for you.
+`agent/` holds the same instructions in two formats, telling an agent how to write Mermaid
+fences whose labels can be found and rewritten in place — explicit node ids, one node or edge
+per line, quoted labels, no repeated label inside one diagram — and what it must never do:
+invent a diagram format, hand-edit the generated workspace map, or put a checkout path in a
+picture:
+
+- `agent/claude/keel-diagram/SKILL.md` — copy the folder into `.claude/skills/`.
+- `agent/copilot/keel-diagram.prompt.md` — copy into `.github/prompts/`.
+
+Keel links them for you once its skills linking lands.
