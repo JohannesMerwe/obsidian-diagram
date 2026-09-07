@@ -1,8 +1,27 @@
-/*
+/* Keel Diagram */
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.keel-diagram-editing {
+	position: relative;
+}
 
-If your plugin does not need CSS, delete this file.
+.keel-diagram-inline-editor {
+	position: absolute;
+	top: var(--keel-diagram-editor-top);
+	left: var(--keel-diagram-editor-left);
+	width: var(--keel-diagram-editor-width);
+	min-height: var(--keel-diagram-editor-height);
+	z-index: var(--layer-popover);
+	box-sizing: border-box;
+	padding: 0 var(--size-4-2);
+	font-size: var(--font-ui-small);
+	color: var(--text-normal);
+	background-color: var(--background-primary);
+	border: var(--input-border-width) solid var(--interactive-accent);
+	border-radius: var(--input-radius);
+	box-shadow: var(--shadow-s);
+}
 
-*/
+.keel-diagram-inline-editor:focus {
+	outline: none;
+	box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
+}
