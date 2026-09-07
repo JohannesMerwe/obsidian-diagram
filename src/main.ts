@@ -1,11 +1,14 @@
-import { MarkdownView, Notice, Plugin, type MarkdownPostProcessorContext, type MarkdownSectionInformation } from 'obsidian';
+import { MarkdownView, Notice, Plugin, type Editor, type MarkdownPostProcessorContext, type MarkdownSectionInformation, type TFile } from 'obsidian';
 import { locateFence, replaceFenceBody, type Fence } from './core/fence';
+import { findMapFences, regenerateMaps, wrapMapFence } from './core/map';
 import { locateNode, rewriteLabel, type LabelTarget, type RenderedRef } from './core/mermaid';
 import { DEFAULT_SETTINGS, KeelDiagramSettingTab, type KeelDiagramSettings } from './settings';
 import { openInlineEditor } from './ui/inline-editor';
+import { WorkspaceMapper } from './workspace-map';
 
 export default class KeelDiagramPlugin extends Plugin {
 	settings: KeelDiagramSettings = { ...DEFAULT_SETTINGS };
+	private mapper = new WorkspaceMapper(this.app);
 
 	async onload(): Promise<void> {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, (await this.loadData()) as Partial<KeelDiagramSettings> | null);
@@ -21,6 +24,63 @@ export default class KeelDiagramPlugin extends Plugin {
 		this.registerDomEvent(document, 'dblclick', (evt: MouseEvent) => {
 			void this.onDoubleClick(evt);
 		});
+
+		// Workspace map (§C6). Both commands are hidden in plain mode (no keel.json above the note).
+		this.addCommand({
+			id: 'insert-workspace-map',
+			name: 'Insert workspace map',
+			editorCheckCallback: (checking, editor, view) => {
+				const path = view.file?.path;
+				if (!path || this.mapper.rootOf(path) === null) return false;
+				if (!checking) void this.insertMap(path, editor);
+				return true;
+			},
+		});
+		this.addCommand({
+			id: 'regenerate-workspace-map',
+			name: 'Regenerate workspace map',
+			checkCallback: (checking) => {
+				const file = this.app.workspace.getActiveFile();
+				if (!file || this.mapper.rootOf(file.path) === null) return false;
+				if (!checking) void this.regenerateMaps(file);
+				return true;
+			},
+		});
+	}
+
+	private async insertMap(path: string, editor: Editor): Promise<void> {
+		const body = await this.mapper.build(path, this.settings.mapDirection);
+		if (body === null) {
+			new Notice('Could not read keel.json for this workspace.');
+			return;
+		}
+		editor.replaceSelection(wrapMapFence(body) + '\n');
+	}
+
+	private async regenerateMaps(file: TFile): Promise<void> {
+		const body = await this.mapper.build(file.path, this.settings.mapDirection);
+		if (body === null) {
+			new Notice('Could not read keel.json for this workspace.');
+			return;
+		}
+		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+		let count = 0;
+		if (view && view.file?.path === file.path && view.getMode() === 'source') {
+			const editor = view.editor;
+			const fences = findMapFences(editor.getValue());
+			for (const fence of [...fences].reverse()) {
+				const lastLine = fence.endLine - 1;
+				editor.replaceRange(body, { line: fence.startLine + 1, ch: 0 }, { line: lastLine, ch: editor.getLine(lastLine).length });
+			}
+			count = fences.length;
+		} else {
+			await this.app.vault.process(file, (data) => {
+				const result = regenerateMaps(data, body);
+				count = result.count;
+				return result.text;
+			});
+		}
+		new Notice(count === 0 ? 'No workspace map in this note. Use "Insert workspace map" first.' : `Regenerated ${count} workspace map${count === 1 ? '' : 's'}.`);
 	}
 
 	/** Render context per section element that may hold a diagram. */
