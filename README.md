@@ -80,7 +80,7 @@ invent a diagram format, hand-edit the generated workspace map, or put a checkou
 picture:
 
 - `agent/claude/keel-diagram/SKILL.md` — on a machine where this repo is a declared checkout,
-  `keel start` links it into `~/.claude/skills/` and `keel stop` unlinks it (keel
-  0.1, KEEL-42). Without keel, copy the folder into `.claude/skills/`.
+  `keel start` links it into `~/.claude/skills/` and `keel stop` unlinks it. Without
+  keel, copy the folder into `.claude/skills/`.
 - `agent/copilot/keel-diagram.prompt.md` — copy into `.github/prompts/`; keel does not link
   Copilot prompts yet (where they belong on a machine is an open question).
