@@ -79,7 +79,8 @@ per line, quoted labels, no repeated label inside one diagram — and what it mu
 invent a diagram format, hand-edit the generated workspace map, or put a checkout path in a
 picture:
 
-- `agent/claude/keel-diagram/SKILL.md` — copy the folder into `.claude/skills/`.
-- `agent/copilot/keel-diagram.prompt.md` — copy into `.github/prompts/`.
-
-Keel links them for you once its skills linking lands.
+- `agent/claude/keel-diagram/SKILL.md` — on a machine where this repo is a declared checkout,
+  `keel start` links it into `~/.claude/skills/` and `keel stop` unlinks it (keel
+  0.1, KEEL-42). Without keel, copy the folder into `.claude/skills/`.
+- `agent/copilot/keel-diagram.prompt.md` — copy into `.github/prompts/`; keel does not link
+  Copilot prompts yet (where they belong on a machine is an open question).
